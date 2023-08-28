@@ -13,5 +13,5 @@ from (
     github_search_issue
   where
     query = 'org:turbot is:open'
-    and repository_full_name = 'turbot/steampipe'
+    and repository_full_name = $1
 ) subquery;

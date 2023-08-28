@@ -1,5 +1,4 @@
---ISSUES AGE
-;select
+select
   title as "Issue Title",
   now()::date - created_at::date as "Age in Days",
   now()::date - updated_at::date as "Last Updated (Days)",
