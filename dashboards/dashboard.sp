@@ -58,26 +58,108 @@ dashboard "tools_insights" {
     }
   }
 
-  input "issue_group" {
-    title = "Select group:"
-    width = 4
-    placeholder = "select group"
-    option  "all" {
-    label = "All issues"
+  container "container_with_charts" {
+    width = 12
+
+    chart "issue_age_stats"{
+      type  = "column"
+      title = "Issue Age Stats:"
+      width = 4
+
+      sql = <<-EOQ
+        WITH age_counts AS (
+          SELECT
+            CASE
+              WHEN now()::date - created_at::date > 180 THEN 'Age >6 Months'
+              WHEN now()::date - created_at::date > 90 THEN 'Age >3 Months'
+              WHEN now()::date - created_at::date > 30 THEN 'Age >1 Month'
+            END AS age_group,
+            1 AS issue_count
+          FROM
+            github_search_issue
+          WHERE
+            query = 'org:turbot is:open'
+            AND repository_full_name = 'turbot/steampipe'
+        )
+        SELECT
+          age_group,
+          COUNT(issue_count) AS count_of_issues
+        FROM
+          age_counts
+        WHERE
+          age_group IS NOT NULL
+        GROUP BY
+          age_group
+        ORDER BY
+          age_group;
+      EOQ
     }
-    option  "community" {
-      label = "Community issues"
-    }
-    option  "turbot" {
-      label = "Turbot team"
+
+    chart "stale_stats" {
+      type  = "donut"
+      title = "Stale Issues Stats:"
+      width = 4
+
+      sql = <<-EOQ
+        WITH
+          total_issues AS (
+            SELECT
+              COUNT(*) AS "TOTAL COUNT"
+            FROM
+              (
+                SELECT
+                  repository_full_name,
+                  title,
+                  now()::date - created_at::date AS "Age in Days",
+                  now()::date - updated_at::date AS "Last Updated (Days)",
+                  author ->> 'login' AS author,
+                  url,
+                  query
+                FROM
+                  github_search_issue
+                WHERE
+                  query = 'org:turbot is:open'
+                  and
+                  repository_full_name = 'turbot/steampipe'
+              ) subquery
+          ),
+          stale_issues AS (
+            SELECT
+              COUNT(*) AS "STALE ISSUES"
+            FROM
+              (
+                SELECT
+                  repository_full_name,
+                  title,
+                  now()::date - created_at::date AS "Age in Days",
+                  now()::date - updated_at::date AS "Last Updated (Days)",
+                  author ->> 'login' AS author,
+                  url,
+                  query
+                FROM
+                  github_search_issue
+                WHERE
+                  query = 'org:turbot is:open label:stale' -- Filter by the "stale" label
+                  AND repository_full_name = 'turbot/steampipe'
+              ) subquery
+          )
+        SELECT
+          "TOTAL COUNT",
+          "STALE ISSUES"
+        FROM
+          total_issues
+  CROSS JOIN stale_issues;
+      EOQ
     }
   }
+  
 
   container "container_with_table" {
     width = 12
 
     table "data" {
-      query = query.issue_table
+      title = "Issue List:"
+      query = query.full_issue_list_table
       args  = [self.input.repo.value]
     }
   }
@@ -165,7 +247,7 @@ query "total_count_community" {
 query "total_age_community" {
   sql = <<-EOQ
     select
-        sum("Age in Days") AS "Community Issues Age"
+        sum("Age in Days") AS "Community Issues Total Age"
       from (
   select
         repository_full_name as "Repository",
@@ -196,13 +278,13 @@ query "total_age_community" {
 query "max_age_issue" {
   sql = <<-EOQ
     select
-      now()::date - created_at::date as "Max Age in Days"
+      now()::date - created_at::date as "Max Issue Age in Days"
     from
       github_search_issue
     where
       query='org:turbot is:open' and
       repository_full_name = $1
-    order by "Max Age in Days" desc limit 1;
+    order by "Max Issue Age in Days" desc limit 1;
   EOQ
 
   param "repository_full_name" {}
@@ -210,7 +292,7 @@ query "max_age_issue" {
 
 # table queries
 
-query "issue_table" {
+query "full_issue_list_table" {
   sql = <<-EOQ
   select
     title as "Issue Title",
@@ -224,6 +306,27 @@ query "issue_table" {
     query='org:turbot is:open' and
     repository_full_name = $1
   order by "Age in Days" desc;
+  EOQ
+
+  param "repository_full_name" {}
+}
+
+query "stale_issue_list_table" {
+  sql = <<-EOQ
+    SELECT
+    repository_full_name AS "Repository",
+    title AS "Issue",
+    now()::date - created_at::date AS "Age in Days",
+    now()::date - updated_at::date AS "Last Updated (Days)",
+    author ->> 'login' AS author,
+    url
+  FROM
+    github_search_issue
+  WHERE
+    query = 'org:turbot is:open label:stale' -- Filter by the "stale" label
+    AND repository_full_name = 'turbot/steampipe'
+  ORDER BY
+    "Age in Days" DESC;
   EOQ
 
   param "repository_full_name" {}
