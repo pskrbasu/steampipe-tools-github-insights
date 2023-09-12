@@ -1,7 +1,8 @@
-mod "tools_insights" {
+mod "tools_team_issue_tracker" {
   # hub metadata
-  title         = "Github insights for Steampipe tools team"
-  description   = "Github insights for Steampipe tools team."
+  title         = "Github Issue Tracker for Steampipe Tools Team"
+  description   = "Github Issue Tracker for Steampipe Tools Team."
+  color         = "#191717"
   
   require {
     plugin "github" {

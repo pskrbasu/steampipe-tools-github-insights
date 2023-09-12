@@ -1,5 +1,5 @@
 dashboard "tools_insights" {
-  title = "Tools Team Github Issues Insights"
+  title = "Tools Team Github Issue Tracker"
 
   input "repo" {
     title = "Select a repo:"
