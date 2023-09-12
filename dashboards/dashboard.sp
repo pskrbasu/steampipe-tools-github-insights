@@ -1,5 +1,5 @@
 dashboard "tools_insights" {
-  title = "Tools team github issues insights"
+  title = "Tools Team Github Issues Insights"
 
   input "repo" {
     title = "Select a repo:"
@@ -19,7 +19,7 @@ dashboard "tools_insights" {
   container "container_with_cards" {
     title = "GitHub Open CLI Issues"
     container {
-      width = 10
+      width = 12
 
       card "total_count" {
         query  = query.total_count
@@ -37,7 +37,7 @@ dashboard "tools_insights" {
 
       card "total_count_community" {
         query  = query.total_count_community
-        type = "info"
+        type = "ok"
         width = 2
         args  = [self.input.repo.value]
       }
@@ -51,7 +51,14 @@ dashboard "tools_insights" {
 
       card "max_age_issue" {
         query  = query.max_age_issue
-        type = "ok"
+        type = "info"
+        width = 2
+        args  = [self.input.repo.value]
+      }
+
+      card "total_count_stale" {
+        query  = query.stale_issues_count
+        type = "alert"
         width = 2
         args  = [self.input.repo.value]
       }
@@ -65,21 +72,22 @@ dashboard "tools_insights" {
       type  = "column"
       title = "Issue Age Stats:"
       width = 4
+      args  = [self.input.repo.value]
 
       sql = <<-EOQ
         WITH age_counts AS (
           SELECT
             CASE
-              WHEN now()::date - created_at::date > 180 THEN 'Age >6 Months'
-              WHEN now()::date - created_at::date > 90 THEN 'Age >3 Months'
-              WHEN now()::date - created_at::date > 30 THEN 'Age >1 Month'
+              WHEN now()::date - created_at::date > 180 THEN '>6 Months'
+              WHEN now()::date - created_at::date > 90 THEN '>3 Months'
+              WHEN now()::date - created_at::date > 30 THEN '>1 Month'
             END AS age_group,
             1 AS issue_count
           FROM
             github_search_issue
           WHERE
             query = 'org:turbot is:open'
-            AND repository_full_name = 'turbot/steampipe'
+            AND repository_full_name = $1
         )
         SELECT
           age_group,
@@ -96,62 +104,43 @@ dashboard "tools_insights" {
     }
 
     chart "stale_stats" {
-      type  = "donut"
+      type  = "pie"
       title = "Stale Issues Stats:"
       width = 4
+      args  = [self.input.repo.value]
 
       sql = <<-EOQ
-        WITH
-          total_issues AS (
-            SELECT
-              COUNT(*) AS "TOTAL COUNT"
-            FROM
-              (
-                SELECT
-                  repository_full_name,
-                  title,
-                  now()::date - created_at::date AS "Age in Days",
-                  now()::date - updated_at::date AS "Last Updated (Days)",
-                  author ->> 'login' AS author,
-                  url,
-                  query
-                FROM
-                  github_search_issue
-                WHERE
-                  query = 'org:turbot is:open'
-                  and
-                  repository_full_name = 'turbot/steampipe'
-              ) subquery
-          ),
-          stale_issues AS (
-            SELECT
-              COUNT(*) AS "STALE ISSUES"
-            FROM
-              (
-                SELECT
-                  repository_full_name,
-                  title,
-                  now()::date - created_at::date AS "Age in Days",
-                  now()::date - updated_at::date AS "Last Updated (Days)",
-                  author ->> 'login' AS author,
-                  url,
-                  query
-                FROM
-                  github_search_issue
-                WHERE
-                  query = 'org:turbot is:open label:stale' -- Filter by the "stale" label
-                  AND repository_full_name = 'turbot/steampipe'
-              ) subquery
-          )
         SELECT
-          "TOTAL COUNT",
-          "STALE ISSUES"
-        FROM
-          total_issues
-  CROSS JOIN stale_issues;
+  'Contributor Stale Issues' AS "Issue Type",
+  COUNT(*) AS "Count"
+FROM
+  github_search_issue
+WHERE
+  query = 'org:turbot is:open label:stale'
+  AND
+  author ->> 'login' NOT IN (
+    SELECT
+      login
+    FROM
+      github_organization_member g
+    WHERE
+      g.organization = ANY(ARRAY['turbot', 'turbotio'])
+  )
+  AND repository_full_name = $1
+UNION ALL
+SELECT
+  'Total Stale Issues' AS "Issue Type",
+  COUNT(*) AS "Count"
+FROM
+  github_search_issue
+WHERE
+  query = 'org:turbot is:open label:stale'
+  AND repository_full_name = $1;
       EOQ
     }
   }
+
+  
   
 
   container "container_with_table" {
@@ -173,12 +162,7 @@ query "total_count" {
       count(*) AS "Total Count"
     from (
       select
-        repository_full_name AS "Repository",
-        title AS "Issue",
-        now()::date - created_at::date AS "Age in Days",
-        now()::date - updated_at::date AS "Last Updated (Days)",
-        "author" ->> 'login' AS "Author",
-        url
+        title AS "Issue"
       from
         github_search_issue
       where
@@ -196,12 +180,7 @@ query "total_age" {
       sum("Age in Days") AS "Total Age in Days"
     from (
       select
-        repository_full_name AS "Repository",
-        title AS "Issue",
-        now()::date - created_at::date AS "Age in Days",
-        now()::date - updated_at::date AS "Last Updated (Days)",
-        "author" ->> 'login' AS "Author",
-        url
+        now()::date - created_at::date AS "Age in Days"
       from
         github_search_issue
       where
@@ -219,12 +198,7 @@ query "total_count_community" {
         count(*) AS "Community Issues"
       from (
   select
-        repository_full_name as "Repository",
-        title as "Issue",
-        now()::date - created_at::date as "Age in Days",
-        now()::date - updated_at::date as "Last Updated (Days)",
-        author ->> 'login' as author,
-        url
+        title as "Issue"
       from
         github_search_issue
       where
@@ -250,12 +224,7 @@ query "total_age_community" {
         sum("Age in Days") AS "Community Issues Total Age"
       from (
   select
-        repository_full_name as "Repository",
-        title as "Issue",
-        now()::date - created_at::date as "Age in Days",
-        now()::date - updated_at::date as "Last Updated (Days)",
-        author ->> 'login' as author,
-        url
+        now()::date - created_at::date as "Age in Days"
       from
         github_search_issue
       where
@@ -290,6 +259,24 @@ query "max_age_issue" {
   param "repository_full_name" {}
 }
 
+query "stale_issues_count" {
+  sql = <<-EOQ
+    select
+      count(*) AS "Stale Issues"
+    from (
+      select
+        title AS "Issue"
+      from
+        github_search_issue
+      where
+        query = 'org:turbot is:open label:stale' -- Filter by the "stale" label
+        and repository_full_name = $1
+    ) subquery;
+  EOQ
+
+  param "repository_full_name" {}
+}
+
 # table queries
 
 query "full_issue_list_table" {
@@ -314,7 +301,6 @@ query "full_issue_list_table" {
 query "stale_issue_list_table" {
   sql = <<-EOQ
     SELECT
-    repository_full_name AS "Repository",
     title AS "Issue",
     now()::date - created_at::date AS "Age in Days",
     now()::date - updated_at::date AS "Last Updated (Days)",
@@ -324,7 +310,35 @@ query "stale_issue_list_table" {
     github_search_issue
   WHERE
     query = 'org:turbot is:open label:stale' -- Filter by the "stale" label
-    AND repository_full_name = 'turbot/steampipe'
+    AND repository_full_name = $1
+  ORDER BY
+    "Age in Days" DESC;
+  EOQ
+
+  param "repository_full_name" {}
+}
+
+query "contributor_issue_list_table" {
+  sql = <<-EOQ
+    SELECT
+    title AS "Issue",
+    now()::date - created_at::date AS "Age in Days",
+    now()::date - updated_at::date AS "Last Updated (Days)",
+    author ->> 'login' AS author,
+    url
+  FROM
+    github_search_issue
+  WHERE
+    query = 'org:turbot is:open'
+    AND repository_full_name = $1
+    AND author ->> 'login' not in (
+      select
+        login
+      from
+        github_organization_member g
+      where
+        g.organization = any( array['turbot', 'turbotio'] )
+      )
   ORDER BY
     "Age in Days" DESC;
   EOQ
