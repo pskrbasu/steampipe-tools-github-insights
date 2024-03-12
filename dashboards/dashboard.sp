@@ -6,13 +6,16 @@ dashboard "tools_insights" {
     width = 4
     placeholder = "select repository"
     option  "turbot/steampipe" {
-    label = "CLI (turbot/steampipe)"
+      label = "Steampipe (turbot/steampipe)"
     }
     option  "turbot/steampipe-postgres-fdw" {
       label = "FDW (turbot/steampipe-postgres-fdw)"
     }
     option  "turbot/steampipe-plugin-sdk" {
       label = "SDK (turbot/steampipe-plugin-sdk)"
+    }
+    option  "turbot/powerpipe" {
+      label = "Powerpipe (turbot/powerpipe)"
     }
   }
 
