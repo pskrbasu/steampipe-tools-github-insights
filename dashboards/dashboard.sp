@@ -9,13 +9,19 @@ dashboard "tools_insights" {
       label = "Steampipe (turbot/steampipe)"
     }
     option  "turbot/steampipe-postgres-fdw" {
-      label = "FDW (turbot/steampipe-postgres-fdw)"
+      label = "Steampipe Postgres FDW (turbot/steampipe-postgres-fdw)"
     }
     option  "turbot/steampipe-plugin-sdk" {
-      label = "SDK (turbot/steampipe-plugin-sdk)"
+      label = "Steampipe Plugin SDK (turbot/steampipe-plugin-sdk)"
     }
     option  "turbot/powerpipe" {
       label = "Powerpipe (turbot/powerpipe)"
+    }
+    option  "turbot/tailpipe" {
+      label = "Tailpipe (turbot/tailpipe)"
+    }
+    option  "turbot/tailpipe-plugin-sdk" {
+      label = "Tailpipe Plugin SDK (turbot/tailpipe-plugin-sdk)"
     }
   }
 
