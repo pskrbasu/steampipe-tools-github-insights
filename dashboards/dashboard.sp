@@ -120,31 +120,31 @@ dashboard "tools_insights" {
 
       sql = <<-EOQ
         SELECT
-  'Contributor Stale Issues' AS "Issue Type",
-  COUNT(*) AS "Count"
-FROM
-  github_search_issue
-WHERE
-  query = 'org:turbot is:open label:stale'
-  AND
-  author ->> 'login' NOT IN (
-    SELECT
-      login
-    FROM
-      github_organization_member g
-    WHERE
-      g.organization = ANY(ARRAY['turbot', 'turbotio'])
-  )
-  AND repository_full_name = $1
-UNION ALL
-SELECT
-  'Total Stale Issues' AS "Issue Type",
-  COUNT(*) AS "Count"
-FROM
-  github_search_issue
-WHERE
-  query = 'org:turbot is:open label:stale'
-  AND repository_full_name = $1;
+          'Contributor Stale Issues' AS "Issue Type",
+          COUNT(*) AS "Count"
+        FROM
+          github_search_issue
+        WHERE
+          query = 'org:turbot is:open label:stale'
+          AND
+          author ->> 'login' NOT IN (
+            SELECT
+              login
+            FROM
+              github_organization_member g
+            WHERE
+              g.organization = ANY(ARRAY['turbot', 'turbotio'])
+          )
+          AND repository_full_name = $1
+        UNION ALL
+        SELECT
+          'Total Stale Issues' AS "Issue Type",
+          COUNT(*) AS "Count"
+        FROM
+          github_search_issue
+        WHERE
+          query = 'org:turbot is:open label:stale'
+          AND repository_full_name = $1;
       EOQ
     }
   }
