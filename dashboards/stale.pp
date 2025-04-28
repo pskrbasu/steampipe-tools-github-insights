@@ -1,6 +1,6 @@
 dashboard "stale_issues" {
-  title = "Tools Team Stale Issues "
-  description = "Stale issue reporting for the Tools team repos"
+  title = "Pipelings Stale Issues "
+  description = "Stale issue reporting for the Pipeling repos"
 
   input "repo" {
     title = "Select a repo:"

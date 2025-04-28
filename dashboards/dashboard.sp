@@ -1,5 +1,5 @@
 dashboard "tools_insights" {
-  title = "Tools Team Github Issue Tracker"
+  title = "Pipelings Age Report"
 
   input "repo" {
     title = "Select a repo:"
