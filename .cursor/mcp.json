@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "powerpipe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@turbot/powerpipe-mcp",
+        "/Users/pskrbasu/work/src/steampipe-tools-github-insights"
+      ]
+    }
+  }
+}

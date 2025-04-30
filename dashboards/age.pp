@@ -1,5 +1,5 @@
 dashboard "tools_insights" {
-  title = "Pipelings Age Report"
+  title = "Age Report"
 
   input "repo" {
     title = "Select a repo:"
@@ -13,6 +13,9 @@ dashboard "tools_insights" {
     }
     option  "turbot/steampipe-plugin-sdk" {
       label = "Steampipe Plugin SDK (turbot/steampipe-plugin-sdk)"
+    }
+    option  "turbot/flowpipe" {
+      label = "Flowpipe (turbot/flowpipe)"
     }
     option  "turbot/powerpipe" {
       label = "Powerpipe (turbot/powerpipe)"

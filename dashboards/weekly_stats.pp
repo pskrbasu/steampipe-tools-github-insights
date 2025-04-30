@@ -1,5 +1,5 @@
 dashboard "weekly_stats" {
-  title = "Pipelings Weekly Stats"
+  title = "Weekly Stats"
   description = "Weekly activity for the pipeling repos"
 
   input "repo" {
