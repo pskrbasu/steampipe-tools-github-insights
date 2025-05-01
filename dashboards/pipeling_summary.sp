@@ -34,11 +34,7 @@ dashboard "pipeling_summary" {
         )
         select
           'Follow-up Issues' as label,
-          case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as value,
+          cnt as value,
           case
             when cnt > 2 then 'alert'
             when cnt > 0 then 'info'
@@ -77,6 +73,29 @@ dashboard "pipeling_summary" {
         from stale_count;
       EOQ
       width = 2
+    }
+    card "total_age_status_steampipe" {
+      title = "Total Age Status"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe';
+      EOQ
     }
   }
 
@@ -145,6 +164,29 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
+    card "total_age_status_postgres_fdw" {
+      title = "Total Age Status"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe-postgres-fdw';
+      EOQ
+    }
   }
 
   container {
@@ -211,6 +253,28 @@ dashboard "pipeling_summary" {
         from stale_count;
       EOQ
       width = 2
+    }
+    card "total_age_status_plugin_sdk" {
+      title = "Total Age Status"
+      width = 2
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe-plugin-sdk';
+      EOQ
     }
   }
 
@@ -279,6 +343,28 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
+    card "total_age_status_flowpipe" {
+      title = "Total Age Status"
+      width = 2
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/flowpipe';
+      EOQ
+    }
   }
 
   container {
@@ -345,6 +431,28 @@ dashboard "pipeling_summary" {
         from stale_count;
       EOQ
       width = 2
+    }
+    card "total_age_status_powerpipe" {
+      title = "Total Age Status"
+      width = 2
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/powerpipe';
+      EOQ
     }
   }
 
@@ -413,6 +521,28 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
+    card "total_age_status_tailpipe" {
+      title = "Total Age Status"
+      width = 2
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/tailpipe';
+      EOQ
+    }
   }
 
   container {
@@ -479,6 +609,28 @@ dashboard "pipeling_summary" {
         from stale_count;
       EOQ
       width = 2
+    }
+    card "total_age_status_tailpipe_plugin_sdk" {
+      title = "Total Age Status"
+      width = 2
+      sql = <<-EOQ
+        select
+          'Total Age Status' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/tailpipe-plugin-sdk';
+      EOQ
     }
   }
 } 
