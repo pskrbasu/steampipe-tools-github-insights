@@ -104,6 +104,37 @@ dashboard "pipeling_summary" {
           and repository_full_name = 'turbot/steampipe';
       EOQ
     }
+    card "total_communtiy_age_status_steampipe" {
+      title = "Total Age (Community)"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
+      sql = <<-EOQ
+        select
+          'Total Age (Community)' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe'
+        and author ->> 'login' not in (
+          select
+              login
+          from
+              github_organization_member g
+          where
+              g.organization = any( array['turbot', 'turbotio'] )
+          )
+      EOQ
+    }
   }
 
   container {
