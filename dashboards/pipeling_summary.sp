@@ -292,6 +292,7 @@ dashboard "pipeling_summary" {
     card "total_age_status_plugin_sdk" {
       title = "Total Age Status"
       width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         select
           'Total Age Status' as label,
@@ -395,6 +396,7 @@ dashboard "pipeling_summary" {
     card "total_age_status_flowpipe" {
       title = "Total Age Status"
       width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         select
           'Total Age Status' as label,
@@ -498,6 +500,7 @@ dashboard "pipeling_summary" {
     card "total_age_status_powerpipe" {
       title = "Total Age Status"
       width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         select
           'Total Age Status' as label,
@@ -601,6 +604,7 @@ dashboard "pipeling_summary" {
     card "total_age_status_tailpipe" {
       title = "Total Age Status"
       width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         select
           'Total Age Status' as label,
@@ -704,6 +708,7 @@ dashboard "pipeling_summary" {
     card "total_age_status_tailpipe_plugin_sdk" {
       title = "Total Age Status"
       width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         select
           'Total Age Status' as label,
