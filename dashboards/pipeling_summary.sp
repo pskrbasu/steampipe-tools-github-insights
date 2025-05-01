@@ -43,7 +43,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -139,7 +139,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -236,7 +236,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -332,7 +332,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -428,7 +428,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -524,7 +524,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
@@ -620,7 +620,7 @@ dashboard "pipeling_summary" {
           case
             when cnt > 2 then 'text:🔴'
             when cnt > 0 then 'text:🟡'
-            else 'text:👍'
+            else 'text:🟢'
           end as icon
         from issue_count;
       EOQ
