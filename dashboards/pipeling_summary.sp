@@ -7,7 +7,7 @@ dashboard "pipeling_summary" {
     width = 12
     
     card "followup_issues_status_steampipe" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       width = 2
       sql = <<-EOQ
@@ -111,7 +111,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_postgres_fdw" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
         with issue_count as (
@@ -215,7 +215,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_plugin_sdk" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         with issue_count as (
@@ -318,7 +318,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_flowpipe" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         with issue_count as (
@@ -421,7 +421,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_powerpipe" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         with issue_count as (
@@ -524,7 +524,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_tailpipe" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         with issue_count as (
@@ -627,7 +627,7 @@ dashboard "pipeling_summary" {
     width = 12
 
     card "followup_issues_status_tailpipe_plugin_sdk" {
-      title = "Follow-up issues (Community)"
+      title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         with issue_count as (
