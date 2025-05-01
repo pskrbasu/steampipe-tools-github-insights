@@ -129,11 +129,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
@@ -219,11 +226,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
@@ -308,11 +322,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
@@ -397,11 +418,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
@@ -486,11 +514,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
@@ -575,11 +610,18 @@ dashboard "pipeling_summary" {
           ) sub
         )
         select
+          'Follow-up Issues' as label,
+          cnt as value,
           case
-            when cnt > 2 then '🔴'
-            when cnt > 0 then '🟡'
-            else '🟢'
-          end as followup_issues_status
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:👍'
+          end as icon
         from issue_count;
       EOQ
       width = 2
