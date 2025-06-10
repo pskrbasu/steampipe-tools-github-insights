@@ -33,7 +33,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -66,7 +66,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_steampipe" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/steampipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -202,7 +235,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -235,7 +268,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_postgres_fdw" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -371,7 +437,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -404,7 +470,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_plugin_sdk" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -540,7 +639,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -573,7 +672,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_flowpipe" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/flowpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -709,7 +841,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -742,7 +874,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_powerpipe" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/powerpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -878,7 +1043,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -911,7 +1076,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_tailpipe" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/tailpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
@@ -1047,7 +1245,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response (Community)' as label,
+          'No response' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -1080,7 +1278,40 @@ dashboard "pipeling_summary" {
             )
         )
         select
-          'Responded but needs triage' as label,
+          'Responded - needs triage' as label,
+          (select count(*) from triage_issues) as value,
+          case
+            when (select count(*) from triage_issues) > 2 then 'alert'
+            when (select count(*) from triage_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from triage_issues) > 2 then 'text:🔴'
+            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_tailpipe_plugin_sdk" {
+      title = "Awaiting Response From Author"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:pending-feedback'
+            and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        )
+        select
+          'Responded - needs more info' as label,
           (select count(*) from triage_issues) as value,
           case
             when (select count(*) from triage_issues) > 2 then 'alert'
