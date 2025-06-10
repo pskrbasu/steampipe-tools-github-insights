@@ -33,7 +33,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -213,7 +213,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -393,7 +393,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -573,7 +573,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -753,7 +753,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -933,7 +933,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
@@ -1113,7 +1113,7 @@ dashboard "pipeling_summary" {
             and c is null
         )
         select
-          'No response' as label,
+          'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
             when (select count(*) from awaiting_issues) > 2 then 'alert'
