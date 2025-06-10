@@ -5,6 +5,49 @@ dashboard "pipeling_summary" {
   container {
     title = "Steampipe"
     width = 12
+
+    card "awaiting_initial_response_steampipe" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/steampipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
     
     card "followup_issues_status_steampipe" {
       title = "Follow-up (Community)"
@@ -141,6 +184,49 @@ dashboard "pipeling_summary" {
     title = "Steampipe Postgres FDW"
     width = 12
 
+    card "awaiting_initial_response_postgres_fdw" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
     card "followup_issues_status_postgres_fdw" {
       title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
@@ -275,6 +361,49 @@ dashboard "pipeling_summary" {
   container {
     title = "Steampipe Plugin SDK"
     width = 12
+
+    card "awaiting_initial_response_plugin_sdk" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
 
     card "followup_issues_status_plugin_sdk" {
       title = "Follow-up (Community)"
@@ -411,6 +540,49 @@ dashboard "pipeling_summary" {
     title = "Flowpipe"
     width = 12
 
+    card "awaiting_initial_response_flowpipe" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/flowpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
     card "followup_issues_status_flowpipe" {
       title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
@@ -545,6 +717,49 @@ dashboard "pipeling_summary" {
   container {
     title = "Powerpipe"
     width = 12
+
+    card "awaiting_initial_response_powerpipe" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/powerpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
 
     card "followup_issues_status_powerpipe" {
       title = "Follow-up (Community)"
@@ -681,6 +896,49 @@ dashboard "pipeling_summary" {
     title = "Tailpipe"
     width = 12
 
+    card "awaiting_initial_response_tailpipe" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/tailpipe'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
     card "followup_issues_status_tailpipe" {
       title = "Follow-up (Community)"
       href = "/tools_team_issue_tracker.dashboard.issues_awaiting_org_followup?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
@@ -815,6 +1073,49 @@ dashboard "pipeling_summary" {
   container {
     title = "Tailpipe Plugin SDK"
     width = 12
+
+    card "awaiting_initial_response_tailpipe_plugin_sdk" {
+      title = "Awaiting Initial Response"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+        )
+        select
+          'No response (Community)' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'alert'
+            when (select count(*) from awaiting_issues) > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
 
     card "followup_issues_status_tailpipe_plugin_sdk" {
       title = "Follow-up (Community)"
