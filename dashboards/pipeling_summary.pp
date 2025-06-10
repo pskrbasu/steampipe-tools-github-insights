@@ -59,7 +59,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -92,7 +92,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -148,36 +148,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_steampipe" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/steampipe';
-      EOQ
-    }
+
     card "total_communtiy_age_status_steampipe" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -261,7 +239,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -294,7 +272,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -350,36 +328,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_postgres_fdw" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/steampipe-postgres-fdw';
-      EOQ
-    }
+
     card "total_communtiy_age_status_postgres_fdw" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -463,7 +419,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -496,7 +452,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -552,36 +508,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_plugin_sdk" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/steampipe-plugin-sdk';
-      EOQ
-    }
+
     card "total_communtiy_age_status_plugin_sdk" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -665,7 +599,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/flowpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -698,7 +632,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/flowpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -754,36 +688,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_flowpipe" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/flowpipe';
-      EOQ
-    }
+
     card "total_communtiy_age_status_flowpipe" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -867,7 +779,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/powerpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -900,7 +812,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/powerpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -956,36 +868,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_powerpipe" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/powerpipe';
-      EOQ
-    }
+
     card "total_communtiy_age_status_powerpipe" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -1069,7 +959,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/tailpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -1102,7 +992,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/tailpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -1158,36 +1048,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_tailpipe" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/tailpipe';
-      EOQ
-    }
+
     card "total_communtiy_age_status_tailpipe" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
@@ -1271,7 +1139,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:needs-triage'
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -1304,7 +1172,7 @@ dashboard "pipeling_summary" {
             i.author ->> 'login' as author,
             i.created_at
           from github_search_issue i
-          where i.query = 'org:turbot is:open label:pending-feedback'
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
@@ -1360,36 +1228,14 @@ dashboard "pipeling_summary" {
       EOQ
       width = 2
     }
-    card "total_age_status_tailpipe_plugin_sdk" {
-      title = "Total Age Status"
-      width = 2
-      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
-      sql = <<-EOQ
-        select
-          'Total Age Status' as label,
-          coalesce(sum(now()::date - created_at::date), 0) as value,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'ok'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'info'
-            else 'alert'
-          end as type,
-          case
-            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟢'
-            when coalesce(sum(now()::date - created_at::date), 0) < 1500 then 'text:🟡'
-            else 'text:🔴'
-          end as icon
-        from github_search_issue
-        where query = 'org:turbot is:open'
-          and repository_full_name = 'turbot/tailpipe-plugin-sdk';
-      EOQ
-    }
+
     card "total_communtiy_age_status_tailpipe_plugin_sdk" {
       title = "Total Age (Community)"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         select
-          'Total Age (Community)' as label,
+          'Total Issues Age' as label,
           coalesce(sum(now()::date - created_at::date), 0) as value,
           case
             when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
