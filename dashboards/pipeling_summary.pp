@@ -8,6 +8,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_steampipe" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -51,6 +52,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_steampipe" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -84,6 +86,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_steampipe" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -188,6 +191,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_flowpipe" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -231,6 +235,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_flowpipe" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -264,6 +269,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_flowpipe" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -368,6 +374,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_powerpipe" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -411,6 +418,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_powerpipe" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -444,6 +452,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_powerpipe" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -548,6 +557,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_tailpipe" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -591,6 +601,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_tailpipe" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -624,6 +635,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_tailpipe" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -728,6 +740,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_postgres_fdw" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -771,6 +784,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_postgres_fdw" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -804,6 +818,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_postgres_fdw" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -908,6 +923,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_plugin_sdk" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -951,6 +967,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_plugin_sdk" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -984,6 +1001,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_plugin_sdk" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -1088,6 +1106,7 @@ dashboard "pipeling_summary" {
 
     card "awaiting_initial_response_tailpipe_plugin_sdk" {
       title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         with awaiting_issues as (
           select 
@@ -1131,6 +1150,7 @@ dashboard "pipeling_summary" {
 
     card "needs_triage_tailpipe_plugin_sdk" {
       title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         with triage_issues as (
           select 
@@ -1164,6 +1184,7 @@ dashboard "pipeling_summary" {
 
     card "pending_feedback_tailpipe_plugin_sdk" {
       title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
         with triage_issues as (
           select 
