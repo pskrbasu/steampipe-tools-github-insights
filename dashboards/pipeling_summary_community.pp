@@ -125,13 +125,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe'
@@ -141,9 +162,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
@@ -321,13 +342,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/flowpipe'
@@ -337,9 +379,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
@@ -517,13 +559,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/powerpipe'
@@ -533,9 +596,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
@@ -713,30 +776,58 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/tailpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(label_age_days) as max_age,
+            count(*) as total_count
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -902,13 +993,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
@@ -918,9 +1030,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
@@ -1098,13 +1210,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
@@ -1114,9 +1247,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,
@@ -1294,13 +1427,34 @@ dashboard "pipeling_summary" {
       title = "Awaiting Response From Author"
       href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
-        with triage_issues as (
+        with pending_issues as (
           select 
             i.number,
             i.title,
             i.author ->> 'login' as author,
             i.created_at,
-            now()::date - i.created_at::date as age_days
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
@@ -1310,9 +1464,9 @@ dashboard "pipeling_summary" {
         ),
         age_stats as (
           select 
-            max(age_days) as max_age,
+            max(label_age_days) as max_age,
             count(*) as total_count
-          from triage_issues
+          from pending_issues
         )
         select
           'Responded - needs more info' as label,

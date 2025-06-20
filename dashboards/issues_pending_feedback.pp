@@ -51,19 +51,47 @@ select
   author,
   created_at::date as created_date,
   case
-    when now()::date - created_at::date > 28 then '🔴'
-    when now()::date - created_at::date > 14 then '🟡'
+    when now()::date - coalesce(
+      (select max(c.created_at)
+       from github_issue_comment c
+       where c.repository_full_name = sub.repository_full_name
+         and c.number = sub.number
+         and c.author_login in (
+           select login from github_organization_member where organization in ('turbot', 'turbotio')
+         )
+      ), sub.created_at
+    )::date > 28 then '🔴'
+    when now()::date - coalesce(
+      (select max(c.created_at)
+       from github_issue_comment c
+       where c.repository_full_name = sub.repository_full_name
+         and c.number = sub.number
+         and c.author_login in (
+           select login from github_organization_member where organization in ('turbot', 'turbotio')
+         )
+      ), sub.created_at
+    )::date > 14 then '🟡'
     else '🟢'
   end as status,
   number as issue_number,
-  now()::date - created_at::date as age_days
+  now()::date - coalesce(
+    (select max(c.created_at)
+     from github_issue_comment c
+     where c.repository_full_name = sub.repository_full_name
+       and c.number = sub.number
+       and c.author_login in (
+         select login from github_organization_member where organization in ('turbot', 'turbotio')
+       )
+    ), sub.created_at
+  )::date as label_age_days
 from (
   select 
     i.number,
     i.url,
     i.title,
     i.author ->> 'login' as author,
-    i.created_at
+    i.created_at,
+    i.repository_full_name
   from github_search_issue i
   where i.query = 'org:turbot is:open label:ext:pending-feedback'
     and i.repository_full_name = $1
@@ -71,7 +99,7 @@ from (
       select login from github_organization_member where organization in ('turbot', 'turbotio')
     )
 ) sub
-order by created_at desc;
+order by label_age_days desc;
 EOQ
 
   param "repository_full_name" {}
