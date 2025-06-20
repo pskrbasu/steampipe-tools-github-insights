@@ -50,7 +50,13 @@ select
   title,
   author,
   created_at::date as created_date,
-  number as issue_number
+  case
+    when now()::date - created_at::date > 28 then '🔴'
+    when now()::date - created_at::date > 14 then '🟡'
+    else '🟢'
+  end as status,
+  number as issue_number,
+  now()::date - created_at::date as age_days
 from (
   select 
     i.number,
