@@ -6,31 +6,31 @@ dashboard "pipeling_summary" {
     value = <<-EOQ
       ## Status Indicators
 
-      **Awaiting Initial Response Cards:**
-      - 🔴 Red (Alert): 1 or more issues awaiting initial response (older than 5 days)
-      - 🟢 Green (OK): 0 issues awaiting initial response
+      **Awaiting Initial Response: Issues older than 5 days that have not been responded to**
+      - 🔴 count > 0
+      - 🟢 count = 0
 
-      **Needs Triage Cards:**
-      - 🔴 Red (Alert): More than 2 issues needing triage
-      - 🟡 Yellow (Info): 1-2 issues needing triage
-      - 🟢 Green (OK): No issues needing triage
+      **Needs Triage: Issues with 'ext:needs-triage' label - this is a label that indicates that the issue has been responded to but now needs to be triaged**
+      - 🔴 age > 28 days
+      - 🟡 14 days < age ≤ 28 days
+      - 🟢 age ≤ 14 days
 
-      **Awaiting Response From Author Cards:**
-      - 🔴 Red (Alert): More than 2 issues pending feedback
-      - 🟡 Yellow (Info): 1-2 issues pending feedback
-      - 🟢 Green (OK): No issues pending feedback
+      **Awaiting Response From Author: Issues with 'ext:pending-feedback' label - this is a label that indicates that the issue has been responded to but now needs more information from the author**
+      - 🔴 age > 28 days
+      - 🟡 14 days < age ≤ 28 days
+      - 🟢 age ≤ 14 days
 
-      **Stale Issues Cards:**
-      - 🔴 Red (Alert): More than 2 stale issues
-      - 🟡 Yellow (Info): 1-2 stale issues
-      - 🟢 Green (OK): No stale issues
+      **Stale Issues: issues with 'stale' label - no activity for 60 days**
+      - 🔴 count > 2
+      - 🟡 1 ≤ count ≤ 2
+      - 🟢 count = 0
 
-      **Total Age Cards:**
-      - 🔴 Red (Alert): Total issue age over 1000 days
-      - 🟡 Yellow (Info): Total issue age between 500-1000 days
-      - 🟢 Green (OK): Total issue age under 500 days
+      **Total Age: sum of all open issue ages in days**
+      - 🔴 total > 1000
+      - 🟡 500 < total ≤ 1000
+      - 🟢 total ≤ 500
     EOQ
-    width = 12
+    width = 4
   }
 
   container {
