@@ -89,25 +89,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -123,25 +130,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -271,25 +285,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/flowpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -305,25 +326,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/flowpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -453,25 +481,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/powerpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -487,25 +522,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/powerpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -635,25 +677,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/tailpipe'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -817,25 +866,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -851,25 +907,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-postgres-fdw'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -999,25 +1062,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -1033,25 +1103,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/steampipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -1181,25 +1258,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:needs-triage'
             and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs triage' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -1215,25 +1299,32 @@ dashboard "pipeling_summary" {
             i.number,
             i.title,
             i.author ->> 'login' as author,
-            i.created_at
+            i.created_at,
+            now()::date - i.created_at::date as age_days
           from github_search_issue i
           where i.query = 'org:turbot is:open label:ext:pending-feedback'
             and i.repository_full_name = 'turbot/tailpipe-plugin-sdk'
             and i.author ->> 'login' not in (
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
         )
         select
           'Responded - needs more info' as label,
-          (select count(*) from triage_issues) as value,
+          (select total_count from age_stats) as value,
           case
-            when (select count(*) from triage_issues) > 2 then 'alert'
-            when (select count(*) from triage_issues) > 0 then 'info'
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
             else 'ok'
           end as type,
           case
-            when (select count(*) from triage_issues) > 2 then 'text:🔴'
-            when (select count(*) from triage_issues) > 0 then 'text:🟡'
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
             else 'text:🟢'
           end as icon;
       EOQ
