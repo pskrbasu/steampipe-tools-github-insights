@@ -2,6 +2,34 @@ dashboard "pipeling_summary" {
   title = "Pipeling Repositories Status (Community issues)"
   width = 12
 
+  text {
+    value = <<-EOQ
+      ## Status Indicators
+
+      **🔴 Red (Alert)**: Issues requiring immediate attention
+      - More than 2 issues awaiting initial response
+      - More than 2 issues needing triage
+      - More than 2 issues pending feedback
+      - More than 2 stale issues
+      - Total issue age over 1000 days
+
+      **🟡 Yellow (Info)**: Issues that need attention soon
+      - 1-2 issues awaiting initial response
+      - 1-2 issues needing triage
+      - 1-2 issues pending feedback
+      - 1-2 stale issues
+      - Total issue age between 500-1000 days
+
+      **🟢 Green (OK)**: Healthy status
+      - No issues awaiting initial response
+      - No issues needing triage
+      - No issues pending feedback
+      - No stale issues
+      - Total issue age under 500 days
+    EOQ
+    width = 12
+  }
+
   container {
     title = "Steampipe"
     width = 12
@@ -153,7 +181,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_steampipe" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe&input.repo=turbot/steampipe"
       sql = <<-EOQ
@@ -336,7 +364,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_flowpipe" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/flowpipe&input.repo=turbot/flowpipe"
       sql = <<-EOQ
@@ -519,7 +547,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_powerpipe" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/powerpipe&input.repo=turbot/powerpipe"
       sql = <<-EOQ
@@ -702,7 +730,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_tailpipe" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe&input.repo=turbot/tailpipe"
       sql = <<-EOQ
@@ -885,7 +913,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_postgres_fdw" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-postgres-fdw&input.repo=turbot/steampipe-postgres-fdw"
       sql = <<-EOQ
@@ -1068,7 +1096,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_plugin_sdk" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-plugin-sdk&input.repo=turbot/steampipe-plugin-sdk"
       sql = <<-EOQ
@@ -1251,7 +1279,7 @@ dashboard "pipeling_summary" {
     }
 
     card "total_communtiy_age_status_tailpipe_plugin_sdk" {
-      title = "Total Age (Community)"
+      title = "Total Age"
       width = 2
       href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/tailpipe-plugin-sdk&input.repo=turbot/tailpipe-plugin-sdk"
       sql = <<-EOQ
