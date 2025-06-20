@@ -6,26 +6,29 @@ dashboard "pipeling_summary" {
     value = <<-EOQ
       ## Status Indicators
 
-      **🔴 Red (Alert)**: Issues requiring immediate attention
-      - More than 2 issues awaiting initial response
-      - More than 2 issues needing triage
-      - More than 2 issues pending feedback
-      - More than 2 stale issues
-      - Total issue age over 1000 days
+      **Awaiting Initial Response Cards:**
+      - 🔴 Red (Alert): 1 or more issues awaiting initial response (older than 5 days)
+      - 🟢 Green (OK): 0 issues awaiting initial response
 
-      **🟡 Yellow (Info)**: Issues that need attention soon
-      - 1-2 issues awaiting initial response
-      - 1-2 issues needing triage
-      - 1-2 issues pending feedback
-      - 1-2 stale issues
-      - Total issue age between 500-1000 days
+      **Needs Triage Cards:**
+      - 🔴 Red (Alert): More than 2 issues needing triage
+      - 🟡 Yellow (Info): 1-2 issues needing triage
+      - 🟢 Green (OK): No issues needing triage
 
-      **🟢 Green (OK)**: Healthy status
-      - No issues awaiting initial response
-      - No issues needing triage
-      - No issues pending feedback
-      - No stale issues
-      - Total issue age under 500 days
+      **Awaiting Response From Author Cards:**
+      - 🔴 Red (Alert): More than 2 issues pending feedback
+      - 🟡 Yellow (Info): 1-2 issues pending feedback
+      - 🟢 Green (OK): No issues pending feedback
+
+      **Stale Issues Cards:**
+      - 🔴 Red (Alert): More than 2 stale issues
+      - 🟡 Yellow (Info): 1-2 stale issues
+      - 🟢 Green (OK): No stale issues
+
+      **Total Age Cards:**
+      - 🔴 Red (Alert): Total issue age over 1000 days
+      - 🟡 Yellow (Info): Total issue age between 500-1000 days
+      - 🟢 Green (OK): Total issue age under 500 days
     EOQ
     width = 12
   }
@@ -60,18 +63,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -243,18 +245,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -426,18 +427,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -609,18 +609,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -792,18 +791,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -975,18 +973,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
@@ -1158,18 +1155,17 @@ dashboard "pipeling_summary" {
               select login from github_organization_member where organization in ('turbot', 'turbotio')
             )
             and c is null
+            and i.created_at < now() - interval '5 days'
         )
         select
           'Not Responded' as label,
           (select count(*) from awaiting_issues) as value,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'alert'
-            when (select count(*) from awaiting_issues) > 0 then 'info'
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
             else 'ok'
           end as type,
           case
-            when (select count(*) from awaiting_issues) > 2 then 'text:🔴'
-            when (select count(*) from awaiting_issues) > 0 then 'text:🟡'
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
             else 'text:🟢'
           end as icon;
       EOQ
