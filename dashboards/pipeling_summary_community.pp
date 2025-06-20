@@ -16,9 +16,9 @@ dashboard "pipeling_summary" {
       - 🟢 age ≤ 14 days
 
       **Awaiting Response From Author: Issues with 'ext:pending-feedback' label - this is a label that indicates that the issue has been responded to but now needs more information from the author**
-      - 🔴 age > 28 days
-      - 🟡 14 days < age ≤ 28 days
-      - 🟢 age ≤ 14 days
+      - 🔴 label age > 28 days
+      - 🟡 14 days < label age ≤ 28 days
+      - 🟢 label age ≤ 14 days
 
       **Stale Issues: issues with 'stale' label - no activity for 60 days**
       - 🔴 count > 2
