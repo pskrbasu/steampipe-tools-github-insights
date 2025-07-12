@@ -3,43 +3,46 @@ dashboard "issues_pending_feedback" {
   width = 12
 
   input "repo" {
-    title = "Select a repo:"
-    width = 4
+    title       = "Select a repo:"
+    width       = 4
     placeholder = "select repository"
-    option  "turbot/steampipe" {
+    option "turbot/steampipe" {
       label = "Steampipe (turbot/steampipe)"
     }
-    option  "turbot/flowpipe" {
+    option "turbot/flowpipe" {
       label = "Flowpipe (turbot/flowpipe)"
     }
-    option  "turbot/powerpipe" {
+    option "turbot/powerpipe" {
       label = "Powerpipe (turbot/powerpipe)"
     }
-    option  "turbot/tailpipe" {
+    option "turbot/tailpipe" {
       label = "Tailpipe (turbot/tailpipe)"
     }
-    option  "turbot/steampipe-postgres-fdw" {
+    option "turbot/steampipe-postgres-fdw" {
       label = "Steampipe Postgres FDW (turbot/steampipe-postgres-fdw)"
     }
-    option  "turbot/steampipe-plugin-sdk" {
+    option "turbot/steampipe-plugin-sdk" {
       label = "Steampipe Plugin SDK (turbot/steampipe-plugin-sdk)"
     }
-    option  "turbot/tailpipe-plugin-sdk" {
+    option "turbot/tailpipe-plugin-sdk" {
       label = "Tailpipe Plugin SDK (turbot/tailpipe-plugin-sdk)"
     }
   }
 
   container {
     description = "This table shows the issues created by external users that have been responded to by the organization but now need feedback from the author."
-    width = 12
-  
+    width       = 12
+
     table {
       query = query.issues_pending_feedback
-      args = [self.input.repo.value]
+      args  = [self.input.repo.value]
       width = 12
+      column "url" {
+        href = "{{.'url'}}"
+      }
     }
   }
-} 
+}
 
 query "issues_pending_feedback" {
   sql = <<-EOQ
