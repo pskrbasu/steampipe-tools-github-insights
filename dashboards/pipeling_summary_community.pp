@@ -1551,4 +1551,655 @@ dashboard "pipeling_summary" {
       EOQ
     }
   }
+
+  container {
+    title = "Pipe Fittings"
+    width = 12
+
+    card "awaiting_initial_response_pipe_fittings" {
+      title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/pipe-fittings&input.repo=turbot/pipe-fittings"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/pipe-fittings'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+            and i.created_at < now() - interval '5 days'
+        )
+        select
+          'Not Responded' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "needs_triage_pipe_fittings" {
+      title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/pipe-fittings&input.repo=turbot/pipe-fittings"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            now()::date - i.created_at::date as age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
+            and i.repository_full_name = 'turbot/pipe-fittings'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
+        )
+        select
+          'Responded - needs triage' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_pipe_fittings" {
+      title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/pipe-fittings&input.repo=turbot/pipe-fittings"
+      sql = <<-EOQ
+        with pending_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
+            and i.repository_full_name = 'turbot/pipe-fittings'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(label_age_days) as max_age,
+            count(*) as total_count
+          from pending_issues
+        )
+        select
+          'Responded - needs more info' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "community_stale_issues_status_pipe_fittings" {
+      title = "Stale Issues"
+      href = "/tools_team_issue_tracker.dashboard.stale_issues?input.repo.value=turbot/pipe-fittings&input.repo=turbot/pipe-fittings"
+      sql = <<-EOQ
+        with stale_count as (
+          select count(*) as cnt
+          from (
+            select 1
+            from github_search_issue
+            where query = 'org:turbot is:open label:stale'
+              and repository_full_name = 'turbot/pipe-fittings'
+              and author ->> 'login' not in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) sub
+        )
+        select
+          'Stale Issues' as label,
+          cnt as value,
+          case
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon
+        from stale_count;
+      EOQ
+      width = 2
+    }
+
+    card "total_communtiy_age_status_pipe_fittings" {
+      title = "Total Age"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/pipe-fittings&input.repo=turbot/pipe-fittings"
+      sql = <<-EOQ
+        select
+          'Total Issues Age' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/pipe-fittings'
+        and author ->> 'login' not in (
+          select
+              login
+          from
+              github_organization_member g
+          where
+              g.organization = any( array['turbot', 'turbotio'] )
+          )
+      EOQ
+    }
+  }
+
+  container {
+    title = "Steampipe SQLite"
+    width = 12
+
+    card "awaiting_initial_response_steampipe_sqlite" {
+      title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/steampipe-sqlite&input.repo=turbot/steampipe-sqlite"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/steampipe-sqlite'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+            and i.created_at < now() - interval '5 days'
+        )
+        select
+          'Not Responded' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "needs_triage_steampipe_sqlite" {
+      title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/steampipe-sqlite&input.repo=turbot/steampipe-sqlite"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            now()::date - i.created_at::date as age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
+            and i.repository_full_name = 'turbot/steampipe-sqlite'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
+        )
+        select
+          'Responded - needs triage' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_steampipe_sqlite" {
+      title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-sqlite&input.repo=turbot/steampipe-sqlite"
+      sql = <<-EOQ
+        with pending_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
+            and i.repository_full_name = 'turbot/steampipe-sqlite'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(label_age_days) as max_age,
+            count(*) as total_count
+          from pending_issues
+        )
+        select
+          'Responded - needs more info' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "community_stale_issues_status_steampipe_sqlite" {
+      title = "Stale Issues"
+      href = "/tools_team_issue_tracker.dashboard.stale_issues?input.repo.value=turbot/steampipe-sqlite&input.repo=turbot/steampipe-sqlite"
+      sql = <<-EOQ
+        with stale_count as (
+          select count(*) as cnt
+          from (
+            select 1
+            from github_search_issue
+            where query = 'org:turbot is:open label:stale'
+              and repository_full_name = 'turbot/steampipe-sqlite'
+              and author ->> 'login' not in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) sub
+        )
+        select
+          'Stale Issues' as label,
+          cnt as value,
+          case
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon
+        from stale_count;
+      EOQ
+      width = 2
+    }
+
+    card "total_communtiy_age_status_steampipe_sqlite" {
+      title = "Total Age"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-sqlite&input.repo=turbot/steampipe-sqlite"
+      sql = <<-EOQ
+        select
+          'Total Issues Age' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe-sqlite'
+        and author ->> 'login' not in (
+          select
+              login
+          from
+              github_organization_member g
+          where
+              g.organization = any( array['turbot', 'turbotio'] )
+          )
+      EOQ
+    }
+  }
+
+  container {
+    title = "Steampipe Export"
+    width = 12
+
+    card "awaiting_initial_response_steampipe_export" {
+      title = "Awaiting Initial Response"
+      href = "/tools_team_issue_tracker.dashboard.issues_awaiting_response?input.repo.value=turbot/steampipe-export&input.repo=turbot/steampipe-export"
+      sql = <<-EOQ
+        with awaiting_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at
+          from github_search_issue i
+          left join lateral (
+            select 1
+            from github_issue_comment c
+            where c.repository_full_name = i.repository_full_name
+              and c.number = i.number
+              and c.author_login in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) c on true
+          where i.query = 'org:turbot is:open'
+            and i.repository_full_name = 'turbot/steampipe-export'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+            and c is null
+            and i.created_at < now() - interval '5 days'
+        )
+        select
+          'Not Responded' as label,
+          (select count(*) from awaiting_issues) as value,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'alert'
+            else 'ok'
+          end as type,
+          case
+            when (select count(*) from awaiting_issues) > 0 then 'text:🔴'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "needs_triage_steampipe_export" {
+      title = "Needs Triage"
+      href = "/tools_team_issue_tracker.dashboard.issues_needs_triage?input.repo.value=turbot/steampipe-export&input.repo=turbot/steampipe-export"
+      sql = <<-EOQ
+        with triage_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            now()::date - i.created_at::date as age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:needs-triage'
+            and i.repository_full_name = 'turbot/steampipe-export'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(age_days) as max_age,
+            count(*) as total_count
+          from triage_issues
+        )
+        select
+          'Responded - needs triage' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "pending_feedback_steampipe_export" {
+      title = "Awaiting Response From Author"
+      href = "/tools_team_issue_tracker.dashboard.issues_pending_feedback?input.repo.value=turbot/steampipe-export&input.repo=turbot/steampipe-export"
+      sql = <<-EOQ
+        with pending_issues as (
+          select 
+            i.number,
+            i.title,
+            i.author ->> 'login' as author,
+            i.created_at,
+            -- Try to find when the label was added by looking for the most recent team response
+            -- This is a proxy since we don't have direct label change history
+            coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            ) as label_added_date,
+            now()::date - coalesce(
+              (select max(c.created_at)
+               from github_issue_comment c
+               where c.repository_full_name = i.repository_full_name
+                 and c.number = i.number
+                 and c.author_login in (
+                   select login from github_organization_member where organization in ('turbot', 'turbotio')
+                 )
+              ), i.created_at
+            )::date as label_age_days
+          from github_search_issue i
+          where i.query = 'org:turbot is:open label:ext:pending-feedback'
+            and i.repository_full_name = 'turbot/steampipe-export'
+            and i.author ->> 'login' not in (
+              select login from github_organization_member where organization in ('turbot', 'turbotio')
+            )
+        ),
+        age_stats as (
+          select 
+            max(label_age_days) as max_age,
+            count(*) as total_count
+          from pending_issues
+        )
+        select
+          'Responded - needs more info' as label,
+          (select total_count from age_stats) as value,
+          case
+            when (select max_age from age_stats) > 28 then 'alert'
+            when (select max_age from age_stats) > 14 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when (select max_age from age_stats) > 28 then 'text:🔴'
+            when (select max_age from age_stats) > 14 then 'text:🟡'
+            else 'text:🟢'
+          end as icon;
+      EOQ
+      width = 2
+    }
+
+    card "community_stale_issues_status_steampipe_export" {
+      title = "Stale Issues"
+      href = "/tools_team_issue_tracker.dashboard.stale_issues?input.repo.value=turbot/steampipe-export&input.repo=turbot/steampipe-export"
+      sql = <<-EOQ
+        with stale_count as (
+          select count(*) as cnt
+          from (
+            select 1
+            from github_search_issue
+            where query = 'org:turbot is:open label:stale'
+              and repository_full_name = 'turbot/steampipe-export'
+              and author ->> 'login' not in (
+                select login from github_organization_member where organization in ('turbot', 'turbotio')
+              )
+          ) sub
+        )
+        select
+          'Stale Issues' as label,
+          cnt as value,
+          case
+            when cnt > 2 then 'alert'
+            when cnt > 0 then 'info'
+            else 'ok'
+          end as type,
+          case
+            when cnt > 2 then 'text:🔴'
+            when cnt > 0 then 'text:🟡'
+            else 'text:🟢'
+          end as icon
+        from stale_count;
+      EOQ
+      width = 2
+    }
+
+    card "total_communtiy_age_status_steampipe_export" {
+      title = "Total Age"
+      width = 2
+      href = "/tools_team_issue_tracker.dashboard.tools_insights?input.repo.value=turbot/steampipe-export&input.repo=turbot/steampipe-export"
+      sql = <<-EOQ
+        select
+          'Total Issues Age' as label,
+          coalesce(sum(now()::date - created_at::date), 0) as value,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'ok'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'info'
+            else 'alert'
+          end as type,
+          case
+            when coalesce(sum(now()::date - created_at::date), 0) < 500 then 'text:🟢'
+            when coalesce(sum(now()::date - created_at::date), 0) < 1000 then 'text:🟡'
+            else 'text:🔴'
+          end as icon
+        from github_search_issue
+        where query = 'org:turbot is:open'
+          and repository_full_name = 'turbot/steampipe-export'
+        and author ->> 'login' not in (
+          select
+              login
+          from
+              github_organization_member g
+          where
+              g.organization = any( array['turbot', 'turbotio'] )
+          )
+      EOQ
+    }
+  }
 } 
